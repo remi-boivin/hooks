@@ -1,0 +1,44 @@
+#!/bin/bash
+
+protected_branch='master'
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+commit_msg=$(git log | grep "WIP")
+policy='[Policy] Never force push or delete the '$protected_branch' branch! (Prevented with pre-push hook.)'
+push_command=$(ps -ocommand= -p $PPID)
+is_destructive='force|delete|\-f'
+will_remove_protected_branch=':'$protected_branch
+
+if [ "$current_branch" = "$protected_branch" ]; then
+    if [[ $push_command =~ $is_destructive ]] && [ $current_branch = $protected_branch ]; then
+        echo $policy
+        exit 1
+    fi
+    
+    if [[ $push_command =~ $is_destructive ]] && [[ $push_command =~ $protected_branch ]]; then
+        echo $policy
+        
+        exit 1
+    fi
+    
+    if [[ $push_command =~ $will_remove_protected_branch ]]; then
+        echo $policy
+        
+        exit 1
+    fi
+    
+    if [ -n "$commit_msg" ]; then
+        echo "Commit message contains WIP, skipping..."
+        exit 1
+    fi
+    read -n1 -p "You're trying to push on protected branch. Do you want to CONTINUE pushing? [Y/n]" doit < /dev/tty  # echo
+    echo "\n"
+    if echo $doit | grep -E '^[Yy]$' > /dev/null
+    then
+        exit 0 # push will execute
+    fi
+    echo "Aborting push..."
+    exit 1 # push will not execute
+else
+    exit 0 # push will execute
+    
+fi

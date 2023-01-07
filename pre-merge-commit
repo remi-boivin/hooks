@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "${BRANCH}" == "master" -a "${GIT_COMMIT_TO_MASTER}" != "true" ]
+then
+  if [ -e "${GIT_DIR}/MERGE_MODE" ]
+  then
+    echo "Merge to master is allowed."
+    exit 0
+  else
+    echo "Commit directly to master is discouraged."
+    echo "If you want to do this, please set GIT_COMMIT_TO_MASTER=true and then commit else run git reset --merge to abort the merge."
+    exit 1
+  fi
+fi
