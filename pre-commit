@@ -1,4 +1,8 @@
 #!/bin/sh
-# gitmoji as a commit hook
+
 exec < /dev/tty
-yarn exec eslint js/**/*.js
+
+echo "Running pre-commit hook"
+
+cmake -B build -G "Unix Makefiles" && cd build/ && make && ctest --output-on-failure --rerun-failed
+
