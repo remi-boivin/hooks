@@ -1,4 +1,0 @@
-#!/bin/sh
-# commintlint as a commit hook
-exec < /dev/tty
-# commitlint --edit $1

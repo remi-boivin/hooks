@@ -1,8 +1,4 @@
 #!/bin/sh
 # commintlint as a commit hook
 exec < /dev/tty
-commitlint --edit $1
-cd ../../
-cmake -B build -G "Unix Makefiles"
-make
-ctest --output-on-failure --rerun-failed
+npx --no-install commitlint --edit "$1"

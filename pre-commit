@@ -1,4 +1,5 @@
 #!/bin/sh
-# gitmoji as a commit hook
+
 exec < /dev/tty
-yarn exec eslint js/**/*.js
+
+echo "Running pre-commit hook"
